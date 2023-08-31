@@ -184,7 +184,7 @@ def track_demo():
     
     # tracker
     class track_args:
-        track_thresh=0.5
+        track_thresh=0.25
         track_buffer = 30
         match_thresh = 0.8
         mot20 = False
@@ -196,6 +196,8 @@ def track_demo():
     
     frameCount = 0
     ret, frame = cap.read() 
+    memory = {}
+    previous={}
     while ret ==True:
         # frame
         if frameCount % 20 == 0:
@@ -206,6 +208,12 @@ def track_demo():
         input_list = [im_shape, prepared_image, scale_factor]
         timer.tic()
         result = run(predictor, input_list)
+        
+        # 人流量统计
+        # 中心线
+        center_pt=[(0,height//2),(width-1,height//2)]
+        cv2.line(frame,center_pt[0],center_pt[1],(255,255,0),3)
+        
         if len(result[0]) >0:
             dets = []
             for res in result[0]:
@@ -232,7 +240,7 @@ def track_demo():
                         online_scores.append(t.score)
                 timer.toc()
                 online_im = plot_tracking(
-                        frame, online_tlwhs, online_ids, frame_id=frameCount + 1, fps=1. / timer.average_time
+                        frame, online_tlwhs, online_ids,scores=online_scores, frame_id=frameCount + 1, fps=1. / timer.average_time
                     )   
             else:
                 timer.toc()
