@@ -204,6 +204,7 @@ def track_demo():
         scale_factor = np.array([im_size * 1. / frame.shape[0], im_size * 1. / frame.shape[1]]).reshape((1, 2)).astype(np.float32)
         im_shape = np.array([im_size, im_size]).reshape((1, 2)).astype(np.float32)
         input_list = [im_shape, prepared_image, scale_factor]
+        timer.tic()
         result = run(predictor, input_list)
         if len(result[0]) >0:
             dets = []
